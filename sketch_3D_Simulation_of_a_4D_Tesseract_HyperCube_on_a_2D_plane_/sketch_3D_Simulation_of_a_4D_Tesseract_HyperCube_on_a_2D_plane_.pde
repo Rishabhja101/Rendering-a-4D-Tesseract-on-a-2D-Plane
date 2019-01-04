@@ -1,4 +1,4 @@
-int dimentions = 3;
+int dimentions = 4;
 float[][] rawPoints;
 float[][] scaledPoints;
 float angle = 0;
@@ -11,15 +11,32 @@ void setup() {
   for(int i = 0; i < rawPoints.length; i++){
     rawPoints[i] = new float[dimentions];
   }
+
+  //rawPoints[0] = new float[]{-0.5, -0.5, -0.5};
+  //rawPoints[1] = new float[]{0.5, -0.5, -0.5};
+  //rawPoints[2] = new float[]{0.5, 0.5, -0.5};
+  //rawPoints[3] = new float[]{-0.5, 0.5, -0.5};
+  //rawPoints[4] = new float[]{-0.5, -0.5, 0.5};
+  //rawPoints[5] = new float[]{0.5, -0.5, 0.5};
+  //rawPoints[6] = new float[]{0.5, 0.5, 0.5};
+  //rawPoints[7] = new float[]{-0.5, 0.5, 0.5};
   
-  rawPoints[0] = new float[]{-0.5, -0.5, -0.5};
-  rawPoints[1] = new float[]{0.5, -0.5, -0.5};
-  rawPoints[2] = new float[]{0.5, 0.5, -0.5};
-  rawPoints[3] = new float[]{-0.5, 0.5, -0.5};
-  rawPoints[4] = new float[]{-0.5, -0.5, 0.5};
-  rawPoints[5] = new float[]{0.5, -0.5, 0.5};
-  rawPoints[6] = new float[]{0.5, 0.5, 0.5};
-  rawPoints[7] = new float[]{-0.5, 0.5, 0.5};
+  rawPoints[0] = new float[]{-0.5, -0.5, -0.5, 0.5};
+  rawPoints[1] = new float[]{0.5, -0.5, -0.5, 0.5};
+  rawPoints[2] = new float[]{0.5, 0.5, -0.5, 0.5};
+  rawPoints[3] = new float[]{-0.5, 0.5, -0.5, 0.5};
+  rawPoints[4] = new float[]{-0.5, -0.5, 0.5, 0.5};
+  rawPoints[5] = new float[]{0.5, -0.5, 0.5, 0.5};
+  rawPoints[6] = new float[]{0.5, 0.5, 0.5, 0.5};
+  rawPoints[7] = new float[]{-0.5, 0.5, 0.5, 0.5};
+  rawPoints[8] = new float[]{-0.5, -0.5, -0.5, -0.5};
+  rawPoints[9] = new float[]{0.5, -0.5, -0.5, -0.5};
+  rawPoints[10] = new float[]{0.5, 0.5, -0.5, -0.5};
+  rawPoints[11] = new float[]{-0.5, 0.5, -0.5, -0.5};
+  rawPoints[12] = new float[]{-0.5, -0.5, 0.5, -0.5};
+  rawPoints[13] = new float[]{0.5, -0.5, 0.5, -0.5};
+  rawPoints[14] = new float[]{0.5, 0.5, 0.5, -0.5};
+  rawPoints[15] = new float[]{-0.5, 0.5, 0.5, -0.5};
 }
 
 void draw() {
@@ -47,21 +64,23 @@ void draw() {
   };
   
   for (int i = 0; i < rawPoints.length; i++) {
-    float[][] point = new float[1][1]; //<>//
+    float[][] point = new float[1][1];
     point[0] = rawPoints[i];
     point = formatPoint(point);
-    point = multiplyMatrices(rotationMatrixX, point);
+    float z = 1 / (2 - point[point.length - 1][0]);
+    point = multiplyMatrices(new float[][]{ {z, 0, 0, 0}, {0, z, 0, 0}, {0, 0, z, 0} }, point);
+    point = multiplyMatrices(rotationMatrixX, point); //<>//
     point = multiplyMatrices(rotationMatrixY, point);
     point = multiplyMatrices(rotationMatrixZ, point);
     point = multiplyMatrices(projectionMatrix(point, 2), point);
     point = formatPoint(point);
-    scaledPoints[i] = point[0]; //<>//
+    scaledPoints[i] = point[0];
   } //<>//
   
   for (int i = 0; i < scaledPoints.length; i++){
-    scaledPoints[i][0] *= 1500;
-    scaledPoints[i][1] *= 1500;
-    point(scaledPoints[i][0], scaledPoints[i][1]); //<>//
+    scaledPoints[i][0] *= 500;
+    scaledPoints[i][1] *= 500;
+    point(scaledPoints[i][0], scaledPoints[i][1]);
   } 
   
   for (int i = 0; i < 4; i++) {
@@ -74,12 +93,25 @@ void draw() {
 }
 
 float[][] projectionMatrix(float[][] point, float scale){
-  float z = 1 / (scale - point[2][0]);
+  float z = 1 / (scale - point[point.length - 1][0]);
   
-  float[][] projectionMatrix = {
-    {z, 0, 0},
-    {0, z, 0}    
-  };
+  float[][] projectionMatrix = new float[point.length - 1][]; //<>//
+  for (int n = 0; n < projectionMatrix.length; n++){
+    projectionMatrix[n] = new float[point.length];
+    for (int i = 0; i < point.length; i++){
+      if (n == i){
+        projectionMatrix[n][i] = z;
+      }
+      else{
+        projectionMatrix[n][i] = 0;
+      }
+    }
+  }
+  
+//  float[][] projectionMatrix = {
+//    {z, 0, 0},
+//    {0, z, 0}    
+//  };
   return projectionMatrix;
 }
 
@@ -102,7 +134,7 @@ float[][] formatPoint(float[][] raw){
 }
 
 float[][] multiplyMatrices(float[][] a, float[][] b){
-  float[][] productMatrix = new float[a.length][];
+  float[][] productMatrix = new float[a.length][]; //<>//
   for(int i = 0; i < productMatrix.length; i++){
     productMatrix[i] = new float[b[0].length];
   }
