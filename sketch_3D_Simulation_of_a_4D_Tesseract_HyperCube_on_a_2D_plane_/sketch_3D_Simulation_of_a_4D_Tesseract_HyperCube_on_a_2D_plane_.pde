@@ -111,7 +111,7 @@ void draw() {
     }
   }
   
-    float[][] rotationMatrixZ = new float[dimentions][]; 
+  float[][] rotationMatrixZ = new float[dimentions][]; 
   for (int n = 0; n < rotationMatrixZ.length; n++){
     rotationMatrixZ[n] = new float[dimentions];
     for (int i = 0; i < rotationMatrixZ.length; i++){
@@ -137,9 +137,8 @@ void draw() {
     float[][] point = new float[1][1];
     point[0] = rawPoints[i];
     point = formatPoint(point);
-//    float z = 1 / (2 - point[point.length - 1][0]);
-//    point = multiplyMatrices(new float[][]{ {z, 0, 0, 0}, {0, z, 0, 0}, {0, 0, z, 0} }, point);
-    point = multiplyMatrices(rotationMatrixX, point);
+
+   // point = multiplyMatrices(rotationMatrixX, point);
     point = multiplyMatrices(rotationMatrixY, point);
     point = multiplyMatrices(rotationMatrixZ, point);
    
@@ -152,17 +151,28 @@ void draw() {
   } //<>//
   
   for (int i = 0; i < scaledPoints.length; i++){
-    scaledPoints[i][0] *= 500;
-    scaledPoints[i][1] *= 500;
+    scaledPoints[i][0] *= 1500;
+    scaledPoints[i][1] *= 1500;
     point(scaledPoints[i][0], scaledPoints[i][1]);
   } 
   
   for (int i = 0; i < 4; i++) {
-    connect(i, (i+1) % 4, scaledPoints);
-    connect(i+4, ((i+1) % 4)+4, scaledPoints);
-    connect(i, i+4, scaledPoints);
+    connect(i, (i + 1) % 4, scaledPoints);
+    connect(i + 4, ((i + 1) % 4) + 4, scaledPoints);
+    connect(i, i + 4, scaledPoints);
+  }
+   
+  for (int i = 0; i < 4; i++) {
+    connect(i + 8, (i + 1) % 4 + 8, scaledPoints);
+    connect(i + 4 + 8, ((i + 1) % 4) + 4 + 8, scaledPoints);
+    connect(i + 8, i + 4 + 8, scaledPoints);
   }
   
+  for (int i = 0; i < 8; i++) {
+    connect(i, i + 8, scaledPoints);
+  }
+  
+//  angle = map(mouseX, 0, width, 0, TWO_PI);
   angle += 0.02;
 }
 
